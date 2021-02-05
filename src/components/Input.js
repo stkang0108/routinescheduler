@@ -7,9 +7,9 @@ export default function Input({ style, ...props }) {
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: '#e5dada',
+    backgroundColor: '#e6e6e6',
     width: '100%',
-    padding: 20,
+    padding: 18,
     borderRadius: 8,
   },
 });

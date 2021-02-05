@@ -1,34 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
+import * as SecureStore from 'expo-secure-store';
 import {
   StyleSheet,
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 import Heading from '../components/Heading';
 import Input from '../components/Input';
 import BoxButton from '../components/BoxButton';
 import TextButton from '../components/TextButton';
 
+const SIGNIN = gql`
+  mutation signin($email: String!, $password: String!) {
+    signin(email: $email, password: $password)
+  }
+`;
+
 export default function SigninScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [signin, { data }] = useMutation(SIGNIN);
+  const signinButton = async () => {
+    try {
+      if (email !== '' && password !== '') {
+        const { data } = await signin({ variables: { email, password } });
+        if (data) {
+          await SecureStore.setItemAsync('token', data.signin);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Heading style={styles.title}>LOG IN</Heading>
         <Input
           style={styles.input}
-          placeholder={'Email'}
+          placeholder={'이메일'}
           keyboardType={'email-address'}
+          value={email}
+          onChangeText={setEmail}
         />
-        <Input style={styles.input} placeholder={'Password'} secureTextEntry />
+        <Input
+          style={styles.input}
+          placeholder={'비밀번호'}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
         <BoxButton
           title={'로그인'}
-          style={styles.signinButton}
-          onPress={() => {}}
+          style={styles.signinBtn}
+          onPress={signinButton}
         />
         <TextButton
           title={'새로운 계정 만들기'}
-          style={styles.signupButton}
+          style={styles.signupBtn}
           onPress={() => {
             navigation.navigate('SIGNUP');
           }}
@@ -51,10 +84,10 @@ const styles = StyleSheet.create({
   input: {
     marginVertical: 8,
   },
-  signinButton: {
+  signinBtn: {
     marginTop: 30,
   },
-  signupButton: {
+  signupBtn: {
     marginTop: 10,
   },
 });
