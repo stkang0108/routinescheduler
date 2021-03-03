@@ -15,7 +15,14 @@ import TextButton from '../components/TextButton';
 
 const SIGNIN = gql`
   mutation signin($email: String!, $password: String!) {
-    signin(email: $email, password: $password)
+    signin(email: $email, password: $password) {
+      token
+      user {
+        email
+        name
+        trainer
+      }
+    }
   }
 `;
 
@@ -28,7 +35,8 @@ export default function SigninScreen({ navigation }) {
       if (email !== '' && password !== '') {
         const { data } = await signin({ variables: { email, password } });
         if (data) {
-          await SecureStore.setItemAsync('token', data.signin);
+          await SecureStore.setItemAsync('Auth', JSON.stringify(data.signin));
+          navigation.reset({ routes: [{ name: 'MAIN' }] });
         }
       }
     } catch (err) {

@@ -4,8 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as SecureStore from 'expo-secure-store';
 import { lightTheme } from './src/theme/light';
-import MainScreen from './src/screens/MainScreen';
 import AuthStackNavigator from './src/navigators/AuthStackNavigator';
+import MainTabNavigator from './src/navigators/MainTabNavigator';
 
 const client = new ApolloClient({
   uri: 'http://192.168.0.17:4000',
@@ -16,9 +16,10 @@ const Rootstack = createStackNavigator();
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
-    SecureStore.getItemAsync('token').then((token) => {
-      if (token) {
+    SecureStore.getItemAsync('Auth').then((Auth) => {
+      if (Auth) {
         setIsLoggedIn(true);
       }
     });
@@ -28,9 +29,11 @@ export default function App() {
     <ApolloProvider client={client}>
       <NavigationContainer theme={lightTheme}>
         {isLoggedIn ? (
-          <MainScreen />
+          <MainTabNavigator />
         ) : (
-          <Rootstack.Navigator screenOptions={{ headerShown: false }}>
+          <Rootstack.Navigator
+            screenOptions={{ headerShown: false, animationEnabled: false }}
+          >
             <Rootstack.Screen
               name={'AuthStack'}
               component={AuthStackNavigator}
