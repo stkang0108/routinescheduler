@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import Todo from '../components/Todo';
+import Diet from '../components/Diet';
 
 const GET_SCHEDULES = gql`
   query getSchedule($email: String!) {
@@ -12,11 +14,12 @@ const GET_SCHEDULES = gql`
     }
   }
 `;
-const today = new Date();
-const year = today.getFullYear();
-const month = today.getMonth() + 1;
-const date = today.getDate();
-const tooday = `${year}-${month}-${date}`;
+const day = new Date();
+const year = day.getFullYear();
+const month =
+  day.getMonth() + 1 < 10 ? '0' + (day.getMonth() + 1) : day.getMonth() + 1;
+const date = day.getDate() < 10 ? '0' + day.getDate() : day.getDate();
+const today = `${year}-${month}-${date}`;
 
 export default function MainScreen() {
   const [user, setUser] = useState({});
@@ -30,15 +33,22 @@ export default function MainScreen() {
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
-  console.log(data.getSchedule[0].date);
+
+  const allSchedule = data.getSchedule;
+  const todaySchedule = new Object();
+  for (let i = 0; i < allSchedule.length; i++) {
+    if (allSchedule[i].date === today) {
+      todaySchedule.todo = allSchedule[i].todo;
+      todaySchedule.diet = allSchedule[i].diet;
+    }
+  }
 
   return (
     <View style={styles.container}>
-      <Text>{tooday}</Text>
-      {data.getSchedule.map((schedule) => (
-        <Text>{schedule.date}</Text>
-      ))}
+      <Text>{today}</Text>
       <Text>안녕하세요 {user.name} 님.</Text>
+      <Todo contents={todaySchedule.todo} />
+      <Diet food={todaySchedule.diet} />
     </View>
   );
 }
