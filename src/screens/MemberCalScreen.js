@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import * as SecureStore from 'expo-secure-store';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { Card, Avatar } from 'react-native-paper';
 import { Agenda } from 'react-native-calendars';
 
-const GET_SCHEDULES = gql`
-  query getSchedule($name: String!) {
-    getSchedule(name: $name) {
-      date
-      todo
-      diet
-    }
-  }
-`;
+const timeToString = (time) => {
+  const date = new Date(time);
+  return date.toISOString().split('T')[0];
+};
 const day = new Date();
 const year = day.getFullYear();
 const month =
@@ -21,26 +15,32 @@ const month =
 const date = day.getDate() < 10 ? '0' + day.getDate() : day.getDate();
 const today = `${year}-${month}-${date}`;
 
-const timeToString = (time) => {
-  const date = new Date(time);
-  return date.toISOString().split('T')[0];
-};
+const GET_SCHEDULES_AND_LECTURE = gql`
+  query($name: String!) {
+    getSchedule(name: $name) {
+      date
+      todo
+      diet
+    }
+    getLecture(name: $name) {
+      date
+      time
+    }
+  }
+`;
 
-export default function CalendarScreen({ navigation }) {
+export default function MemberCalScreen({ route, navigation }) {
+  const { name } = route.params;
   const [items, setItems] = useState({});
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    SecureStore.getItemAsync('Auth').then((Auth) => {
-      setUser(JSON.parse(Auth).user);
-    });
-  }, []);
-  const { loading, error, data } = useQuery(GET_SCHEDULES, {
-    variables: { name: user.name },
+  const { loading, error, data } = useQuery(GET_SCHEDULES_AND_LECTURE, {
+    variables: { name },
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
 
   const allSchedule = data.getSchedule;
+  const allLecture = data.getLecture;
+
   const loadItems = (day) => {
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
@@ -53,6 +53,15 @@ export default function CalendarScreen({ navigation }) {
               items[strTime].push({
                 date: strTime,
                 todo: allSchedule[j].todo,
+              });
+            }
+          }
+          if (allLecture[j].date === strTime) {
+            if (!items[strTime]) {
+              items[strTime] = [];
+              items[strTime].push({
+                date: strTime,
+                time: allLecture[j].time,
               });
             }
           }
@@ -83,8 +92,7 @@ export default function CalendarScreen({ navigation }) {
         style={styles.itemContainer}
         onPress={() => {
           navigation.navigate('ADD', {
-            name: user.name,
-            email: user.email,
+            name,
             date: item.date,
           });
         }}
@@ -92,7 +100,7 @@ export default function CalendarScreen({ navigation }) {
         <Card>
           <Card.Content>
             <View style={styles.item}>
-              <Text>{item.todo}</Text>
+              <Text>{item.todo ? item.todo : item.time}</Text>
               <Avatar.Text label='PT' />
             </View>
           </Card.Content>

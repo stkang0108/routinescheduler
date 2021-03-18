@@ -5,8 +5,8 @@ import Todo from '../components/Todo';
 import Diet from '../components/Diet';
 
 const GET_SCHEDULES = gql`
-  query getSchedule($email: String!) {
-    getSchedule(email: $email) {
+  query getSchedule($name: String!) {
+    getSchedule(name: $name) {
       date
       todo
       diet
@@ -17,7 +17,7 @@ const GET_SCHEDULES = gql`
 export default function SelectedScreen({ route }) {
   const { date, email, name } = route.params;
   const { loading, error, data } = useQuery(GET_SCHEDULES, {
-    variables: { email },
+    variables: { name },
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
