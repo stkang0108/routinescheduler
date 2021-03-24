@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import Todo from '../components/Todo';
 import Diet from '../components/Diet';
+import Lecture from '../components/Lecture';
 
 const day = new Date();
 const year = day.getFullYear();
@@ -20,14 +21,19 @@ const GET_SCHEDULES_AND_TODAYLECTURE = gql`
       diet
     }
     getTodayLecture(name: $name) {
+      id
       date
       time
+      postedBy {
+        name
+      }
     }
   }
 `;
 
 export default function MainScreen() {
   const [user, setUser] = useState({});
+  const [lecture, setLecture] = useState({});
   useEffect(() => {
     SecureStore.getItemAsync('Auth').then((Auth) => {
       setUser(JSON.parse(Auth).user);
@@ -40,19 +46,28 @@ export default function MainScreen() {
   if (error) return 'Error! ${error}';
 
   const todaySchedule = new Object();
-  const allSchedule = data.getSchedule;
-  const allLecture = data.getTodayLecture;
-  for (let i = 0; i < allSchedule.length; i++) {
-    if (allSchedule[i].date === today) {
-      todaySchedule.todo = allSchedule[i].todo;
-      todaySchedule.diet = allSchedule[i].diet;
+  const todayLecture = [];
+  const allSchedules = data.getSchedule;
+  const allLectures = data.getTodayLecture;
+  for (let i = 0; i < allSchedules.length; i++) {
+    if (allSchedules[i].date === today) {
+      todaySchedule.todo = allSchedules[i].todo;
+      todaySchedule.diet = allSchedules[i].diet;
     }
   }
-  for (let j = 0; j < allLecture.length; j++) {
-    if (allLecture[j].date === today) {
-      todaySchedule.time = allLecture[j].time;
+  for (let j = 0; j < allLectures.length; j++) {
+    if (allLectures[j].date === today) {
+      lecture[today] = [];
+      lecture[today].push({
+        id: allLectures[j].id,
+        time: allLectures[j].time,
+        name: allLectures[j].postedBy.name,
+      });
+      todayLecture.push(lecture[today]);
     }
   }
+
+  console.log(todayLecture.flat());
 
   return (
     <View style={styles.container}>
@@ -65,7 +80,19 @@ export default function MainScreen() {
         </View>
       ) : (
         <View style={styles.contentsContainer}>
-          <Todo contents={todaySchedule.time} />
+          <Text style={styles.lectureText}>Lecture</Text>
+          {todayLecture
+            .flat()
+            .sort(function (a, b) {
+              return a['time'].replace(':', '') - b['time'].replace(':', '');
+            })
+            .map((lecture) => (
+              <Lecture
+                key={lecture.id}
+                time={lecture.time}
+                name={lecture.name}
+              />
+            ))}
         </View>
       )}
     </View>
@@ -89,5 +116,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  lectureText: {
+    marginBottom: 10,
   },
 });

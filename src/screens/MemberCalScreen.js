@@ -40,15 +40,22 @@ export default function MemberCalScreen({ route, navigation }) {
 
   const allSchedule = data.getSchedule;
   const allLecture = data.getLecture;
+  const count = allSchedule.length + allLecture.length;
 
   const loadItems = (day) => {
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = timeToString(time);
-        for (let j = 0; j < allSchedule.length; j++) {
-          if (allSchedule[j].date === strTime) {
-            if (!items[strTime]) {
+        if (!items[strTime]) {
+          items[strTime] = [];
+          items[strTime].push({
+            date: strTime,
+          });
+        }
+        for (let j = 0; j < count; j++) {
+          if (allSchedule.length !== 0) {
+            if (allSchedule[j].date === strTime) {
               items[strTime] = [];
               items[strTime].push({
                 date: strTime,
@@ -56,8 +63,8 @@ export default function MemberCalScreen({ route, navigation }) {
               });
             }
           }
-          if (allLecture[j].date === strTime) {
-            if (!items[strTime]) {
+          if (allLecture !== 0) {
+            if (allLecture[j].date === strTime) {
               items[strTime] = [];
               items[strTime].push({
                 date: strTime,
@@ -68,16 +75,6 @@ export default function MemberCalScreen({ route, navigation }) {
         }
       }
 
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-        if (!items[strTime]) {
-          items[strTime] = [];
-          items[strTime].push({
-            date: strTime,
-          });
-        }
-      }
       const newItems = {};
       Object.keys(items).forEach((key) => {
         newItems[key] = items[key];
