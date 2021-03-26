@@ -23,11 +23,13 @@ export const GET_SCHEDULES_AND_TODAYLECTURE = gql`
 export const GET_SCHEDULES_AND_LECTURE = gql`
   query($name: String!) {
     getSchedule(name: $name) {
+      id
       date
       todo
       diet
     }
     getLecture(name: $name) {
+      id
       date
       time
     }
@@ -50,5 +52,17 @@ export const ADDSCHEDULE = gql`
     $diet: String!
   ) {
     addSchedule(name: $name, date: $date, todo: $todo, diet: $diet)
+  }
+`;
+
+export const DELETELECTURE = gql`
+  mutation deleteLecture($id: ID!) {
+    deleteLecture(id: $id)
+  }
+`;
+
+export const DELETESCHEDULE = gql`
+  mutation deleteSchesule($id: ID!) {
+    deleteSchedule(id: $id)
   }
 `;

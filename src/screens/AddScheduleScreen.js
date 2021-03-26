@@ -18,6 +18,8 @@ import Lecture from '../components/Lecture';
 import {
   ADDLECTURE,
   ADDSCHEDULE,
+  DELETESCHEDULE,
+  DELETELECTURE,
   GET_SCHEDULES_AND_LECTURE,
 } from '../query_mutation';
 
@@ -30,6 +32,7 @@ export default function AddScheduleScreen({ route }) {
   const [show, setShow] = useState(false);
   const { loading, error, data } = useQuery(GET_SCHEDULES_AND_LECTURE, {
     variables: { name },
+    pollInterval: 300,
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
@@ -40,21 +43,34 @@ export default function AddScheduleScreen({ route }) {
   const allLectures = data.getLecture;
   for (let i = 0; i < allSchedules.length; i++) {
     if (allSchedules[i].date === date) {
+      selectedDaySchedule.id = allSchedules[i].id;
       selectedDaySchedule.todo = allSchedules[i].todo;
       selectedDaySchedule.diet = allSchedules[i].diet;
     }
   }
   for (let j = 0; j < allLectures.length; j++) {
     if (allLectures[j].date === date) {
+      selectedDayLecture.id = allLectures[j].id;
       selectedDayLecture.time = allLectures[j].time;
     }
   }
-
+  console.log(selectedDaySchedule.id);
   const [addSchedule] = useMutation(ADDSCHEDULE);
   const scheduleRegister = async () => {
     try {
       await addSchedule({
         variables: { name, todo, diet, date },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const [deleteSchedule] = useMutation(DELETESCHEDULE);
+  const scheduleDelete = async () => {
+    try {
+      await deleteSchedule({
+        variables: { id: selectedDaySchedule.id },
       });
     } catch (err) {
       console.log(err);
@@ -76,6 +92,17 @@ export default function AddScheduleScreen({ route }) {
     }
   };
 
+  const [deleteLecture] = useMutation(DELETELECTURE);
+  const lectureDelete = async () => {
+    try {
+      await deleteLecture({
+        variables: { id: selectedDayLecture.id },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const toggleSwitch = () => setLecture((previousState) => !previousState);
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || time;
@@ -91,12 +118,22 @@ export default function AddScheduleScreen({ route }) {
           <View style={styles.contentsContainer}>
             <Todo contents={selectedDaySchedule.todo} />
             <Diet food={selectedDaySchedule.diet} />
+            <BoxButton
+              style={styles.button}
+              title={'삭제하기'}
+              onPress={scheduleDelete}
+            />
           </View>
         </View>
       ) : selectedDayLecture.time ? (
         <View style={styles.container}>
           <Text>{date}</Text>
           <Lecture time={selectedDayLecture.time} name={name} />
+          <BoxButton
+            style={styles.button}
+            title={'삭제하기'}
+            onPress={lectureDelete}
+          />
         </View>
       ) : (
         <View style={styles.container}>
