@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import {
   StyleSheet,
   Text,
@@ -12,23 +12,14 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Input from '../components/Input';
 import BoxButton from '../components/BoxButton';
-
-const ADDSCHEDULE = gql`
-  mutation addSchedule(
-    $name: String!
-    $date: String!
-    $todo: String!
-    $diet: String!
-  ) {
-    addSchedule(name: $name, date: $date, todo: $todo, diet: $diet)
-  }
-`;
-
-const ADDLECTURE = gql`
-  mutation addLecture($name: String!, $date: String!, $time: String!) {
-    addLecture(name: $name, date: $date, time: $time)
-  }
-`;
+import Todo from '../components/Todo';
+import Diet from '../components/Diet';
+import Lecture from '../components/Lecture';
+import {
+  ADDLECTURE,
+  ADDSCHEDULE,
+  GET_SCHEDULES_AND_LECTURE,
+} from '../query_mutation';
 
 export default function AddScheduleScreen({ route }) {
   const { date, name } = route.params;
@@ -37,6 +28,28 @@ export default function AddScheduleScreen({ route }) {
   const [lecture, setLecture] = useState(false);
   const [time, setTime] = useState(new Date());
   const [show, setShow] = useState(false);
+  const { loading, error, data } = useQuery(GET_SCHEDULES_AND_LECTURE, {
+    variables: { name },
+  });
+  if (loading) return null;
+  if (error) return 'Error! ${error}';
+
+  const selectedDaySchedule = new Object();
+  const selectedDayLecture = new Object();
+  const allSchedules = data.getSchedule;
+  const allLectures = data.getLecture;
+  for (let i = 0; i < allSchedules.length; i++) {
+    if (allSchedules[i].date === date) {
+      selectedDaySchedule.todo = allSchedules[i].todo;
+      selectedDaySchedule.diet = allSchedules[i].diet;
+    }
+  }
+  for (let j = 0; j < allLectures.length; j++) {
+    if (allLectures[j].date === date) {
+      selectedDayLecture.time = allLectures[j].time;
+    }
+  }
+
   const [addSchedule] = useMutation(ADDSCHEDULE);
   const scheduleRegister = async () => {
     try {
@@ -72,50 +85,65 @@ export default function AddScheduleScreen({ route }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Switch
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          ios_backgroundColor='#3e3e3e'
-          onValueChange={toggleSwitch}
-          value={lecture}
-        />
-        {lecture ? (
-          <View style={styles.todoCont}>
-            <DateTimePicker
-              testID='dateTimePicker'
-              value={time}
-              mode='time'
-              local='ko-KR'
-              display='spinner'
-              onChange={onChange}
-              style={{ width: '100%' }}
-            />
-            <Text>{date}</Text>
-            <Text>{JSON.stringify(time + '09:00').slice(16, 22)}</Text>
-            <BoxButton
-              style={styles.button}
-              title={'등록하기'}
-              onPress={lectureRegister}
-            />
+      {selectedDaySchedule.todo ? (
+        <View style={styles.container}>
+          <Text>{date}</Text>
+          <View style={styles.contentsContainer}>
+            <Todo contents={selectedDaySchedule.todo} />
+            <Diet food={selectedDaySchedule.diet} />
           </View>
-        ) : (
-          <View style={styles.todoCont}>
-            <Text> To Do.</Text>
-            <Input
-              placeholder={'Routine'}
-              value={todo}
-              onChangeText={setTodo}
-            />
-            <Text> Diet.</Text>
-            <Input placeholder={'Diet'} value={diet} onChangeText={setDiet} />
-            <BoxButton
-              style={styles.button}
-              title={'등록하기'}
-              onPress={scheduleRegister}
-            />
-          </View>
-        )}
-      </View>
+        </View>
+      ) : selectedDayLecture.time ? (
+        <View style={styles.container}>
+          <Text>{date}</Text>
+          <Lecture time={selectedDayLecture.time} name={name} />
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <Switch
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+            ios_backgroundColor='#3e3e3e'
+            onValueChange={toggleSwitch}
+            value={lecture}
+          />
+          {lecture ? (
+            <View style={styles.todoCont}>
+              <DateTimePicker
+                testID='dateTimePicker'
+                value={time}
+                mode='time'
+                local='ko-KR'
+                display='spinner'
+                onChange={onChange}
+                style={{ width: '100%' }}
+              />
+              <Text>{date}</Text>
+              <Text>{JSON.stringify(time + '09:00').slice(16, 22)}</Text>
+              <BoxButton
+                style={styles.button}
+                title={'등록하기'}
+                onPress={lectureRegister}
+              />
+            </View>
+          ) : (
+            <View style={styles.todoCont}>
+              <Text> To Do.</Text>
+              <Input
+                placeholder={'Routine'}
+                value={todo}
+                onChangeText={setTodo}
+              />
+              <Text> Diet.</Text>
+              <Input placeholder={'Diet'} value={diet} onChangeText={setDiet} />
+              <BoxButton
+                style={styles.button}
+                title={'등록하기'}
+                onPress={scheduleRegister}
+              />
+            </View>
+          )}
+        </View>
+      )}
     </TouchableWithoutFeedback>
   );
 }

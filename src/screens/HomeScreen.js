@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import Todo from '../components/Todo';
 import Diet from '../components/Diet';
 import Lecture from '../components/Lecture';
+import { GET_SCHEDULES_AND_TODAYLECTURE } from '../query_mutation';
 
 const day = new Date();
 const year = day.getFullYear();
@@ -12,24 +13,6 @@ const month =
   day.getMonth() + 1 < 10 ? '0' + (day.getMonth() + 1) : day.getMonth() + 1;
 const date = day.getDate() < 10 ? '0' + day.getDate() : day.getDate();
 const today = `${year}-${month}-${date}`;
-
-const GET_SCHEDULES_AND_TODAYLECTURE = gql`
-  query($name: String!) {
-    getSchedule(name: $name) {
-      date
-      todo
-      diet
-    }
-    getTodayLecture(name: $name) {
-      id
-      date
-      time
-      postedBy {
-        name
-      }
-    }
-  }
-`;
 
 export default function MainScreen() {
   const [user, setUser] = useState({});
@@ -41,6 +24,7 @@ export default function MainScreen() {
   }, []);
   const { loading, error, data } = useQuery(GET_SCHEDULES_AND_TODAYLECTURE, {
     variables: { name: user.name },
+    pollInterval: 300,
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
@@ -57,17 +41,13 @@ export default function MainScreen() {
   }
   for (let j = 0; j < allLectures.length; j++) {
     if (allLectures[j].date === today) {
-      lecture[today] = [];
-      lecture[today].push({
+      todayLecture.push({
         id: allLectures[j].id,
         time: allLectures[j].time,
         name: allLectures[j].postedBy.name,
       });
-      todayLecture.push(lecture[today]);
     }
   }
-
-  console.log(todayLecture.flat());
 
   return (
     <View style={styles.container}>
@@ -82,7 +62,6 @@ export default function MainScreen() {
         <View style={styles.contentsContainer}>
           <Text style={styles.lectureText}>Lecture</Text>
           {todayLecture
-            .flat()
             .sort(function (a, b) {
               return a['time'].replace(':', '') - b['time'].replace(':', '');
             })

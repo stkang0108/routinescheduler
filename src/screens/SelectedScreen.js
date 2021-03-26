@@ -3,16 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { StyleSheet, Text, View } from 'react-native';
 import Todo from '../components/Todo';
 import Diet from '../components/Diet';
-
-const GET_SCHEDULES = gql`
-  query getSchedule($name: String!) {
-    getSchedule(name: $name) {
-      date
-      todo
-      diet
-    }
-  }
-`;
+import { GET_SCHEDULES } from '../query_mutation';
 
 export default function SelectedScreen({ route }) {
   const { date, email, name } = route.params;

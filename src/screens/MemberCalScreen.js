@@ -3,6 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { Card, Avatar } from 'react-native-paper';
 import { Agenda } from 'react-native-calendars';
+import { GET_SCHEDULES_AND_LECTURE } from '../query_mutation';
 
 const timeToString = (time) => {
   const date = new Date(time);
@@ -15,33 +16,18 @@ const month =
 const date = day.getDate() < 10 ? '0' + day.getDate() : day.getDate();
 const today = `${year}-${month}-${date}`;
 
-const GET_SCHEDULES_AND_LECTURE = gql`
-  query($name: String!) {
-    getSchedule(name: $name) {
-      date
-      todo
-      diet
-    }
-    getLecture(name: $name) {
-      date
-      time
-    }
-  }
-`;
-
 export default function MemberCalScreen({ route, navigation }) {
   const { name } = route.params;
   const [items, setItems] = useState({});
   const { loading, error, data } = useQuery(GET_SCHEDULES_AND_LECTURE, {
     variables: { name },
+    pollInterval: 300,
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
 
   const allSchedule = data.getSchedule;
   const allLecture = data.getLecture;
-  const count = allSchedule.length + allLecture.length;
-
   const loadItems = (day) => {
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
@@ -53,8 +39,8 @@ export default function MemberCalScreen({ route, navigation }) {
             date: strTime,
           });
         }
-        for (let j = 0; j < count; j++) {
-          if (allSchedule.length !== 0) {
+        if (allSchedule.length !== 0) {
+          for (let j = 0; j < allSchedule.length; j++) {
             if (allSchedule[j].date === strTime) {
               items[strTime] = [];
               items[strTime].push({
@@ -63,12 +49,14 @@ export default function MemberCalScreen({ route, navigation }) {
               });
             }
           }
-          if (allLecture !== 0) {
-            if (allLecture[j].date === strTime) {
+        }
+        if (allLecture !== 0) {
+          for (let k = 0; k < allLecture.length; k++) {
+            if (allLecture[k].date === strTime) {
               items[strTime] = [];
               items[strTime].push({
                 date: strTime,
-                time: allLecture[j].time,
+                time: allLecture[k].time,
               });
             }
           }
