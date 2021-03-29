@@ -66,3 +66,15 @@ export const DELETESCHEDULE = gql`
     deleteSchedule(id: $id)
   }
 `;
+
+export const EDITLECTURE = gql`
+  mutation editLecture($id: ID!, $time: String!) {
+    editLecture(id: $id, time: $time)
+  }
+`;
+
+export const EDITSCHEDULE = gql`
+  mutation editSchedule($id: ID!, $todo: String!, $diet: String!) {
+    editSchedule(id: $id, todo: $todo, diet: $diet)
+  }
+`;

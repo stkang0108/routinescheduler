@@ -23,7 +23,7 @@ import {
   GET_SCHEDULES_AND_LECTURE,
 } from '../query_mutation';
 
-export default function AddScheduleScreen({ route }) {
+export default function AddScheduleScreen({ route, navigation }) {
   const { date, name } = route.params;
   const [todo, setTodo] = useState('');
   const [diet, setDiet] = useState('');
@@ -54,7 +54,7 @@ export default function AddScheduleScreen({ route }) {
       selectedDayLecture.time = allLectures[j].time;
     }
   }
-  console.log(selectedDaySchedule.id);
+
   const [addSchedule] = useMutation(ADDSCHEDULE);
   const scheduleRegister = async () => {
     try {
@@ -118,22 +118,47 @@ export default function AddScheduleScreen({ route }) {
           <View style={styles.contentsContainer}>
             <Todo contents={selectedDaySchedule.todo} />
             <Diet food={selectedDaySchedule.diet} />
-            <BoxButton
-              style={styles.button}
-              title={'삭제하기'}
-              onPress={scheduleDelete}
-            />
+            <View style={styles.buttonContatiner}>
+              <BoxButton
+                style={styles.button}
+                title={'수정'}
+                onPress={() => {
+                  navigation.navigate('EDITS', {
+                    id: selectedDaySchedule.id,
+                    etodo: selectedDaySchedule.todo,
+                    ediet: selectedDaySchedule.diet,
+                  });
+                }}
+              />
+              <BoxButton
+                style={styles.button}
+                title={'삭제'}
+                onPress={scheduleDelete}
+              />
+            </View>
           </View>
         </View>
       ) : selectedDayLecture.time ? (
         <View style={styles.container}>
           <Text>{date}</Text>
           <Lecture time={selectedDayLecture.time} name={name} />
-          <BoxButton
-            style={styles.button}
-            title={'삭제하기'}
-            onPress={lectureDelete}
-          />
+          <View style={styles.buttonContatiner}>
+            <BoxButton
+              style={styles.button}
+              title={'수정'}
+              onPress={() => {
+                navigation.navigate('EDITL', {
+                  id: selectedDayLecture.id,
+                  etime: selectedDayLecture.time,
+                });
+              }}
+            />
+            <BoxButton
+              style={styles.button}
+              title={'삭제'}
+              onPress={lectureDelete}
+            />
+          </View>
         </View>
       ) : (
         <View style={styles.container}>
@@ -200,5 +225,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 20,
+  },
+  buttonContatiner: {
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
