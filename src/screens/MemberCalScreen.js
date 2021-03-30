@@ -5,16 +5,17 @@ import { Card, Avatar } from 'react-native-paper';
 import { Agenda } from 'react-native-calendars';
 import { GET_SCHEDULES_AND_LECTURE } from '../query_mutation';
 
-const timeToString = (time) => {
-  const date = new Date(time);
-  return date.toISOString().split('T')[0];
-};
 const day = new Date();
 const year = day.getFullYear();
 const month =
   day.getMonth() + 1 < 10 ? '0' + (day.getMonth() + 1) : day.getMonth() + 1;
 const date = day.getDate() < 10 ? '0' + day.getDate() : day.getDate();
 const today = `${year}-${month}-${date}`;
+
+const timeToString = (time) => {
+  const date = new Date(time);
+  return date.toISOString().split('T')[0];
+};
 
 export default function MemberCalScreen({ route, navigation }) {
   const { name } = route.params;

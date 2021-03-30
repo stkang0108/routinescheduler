@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import CalendarStackNavigator from '../navigators/CalendarStackNavigator';
+import * as SecureStore from 'expo-secure-store';
 import ProfileScreen from '../screens/ProfileScreen';
 import HomeScreen from '../screens/HomeScreen';
+import TrainerCalendarStackNavigator from '../navigators/TrainerCalendarStackNavigator';
+import MemberCalendarStackNavigator from '../navigators/MemberCalendarStackNavigator';
 
 const MainTab = createBottomTabNavigator();
 
 export default function MainTabNavigator() {
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    SecureStore.getItemAsync('Auth').then((Auth) => {
+      setUser(JSON.parse(Auth).user);
+    });
+  }, []);
+
   return (
     <MainTab.Navigator
       initialRouteName='Home'
@@ -33,7 +42,22 @@ export default function MainTabNavigator() {
       }}
     >
       <MainTab.Screen name={'Home'} component={HomeScreen} />
-      <MainTab.Screen name={'Calendar'} component={CalendarStackNavigator} />
+      {user.trainer === 'trainer' ? (
+        <>
+          <MainTab.Screen
+            name={'Calendar'}
+            component={TrainerCalendarStackNavigator}
+          />
+        </>
+      ) : (
+        <>
+          <MainTab.Screen
+            name={'Calendar'}
+            component={MemberCalendarStackNavigator}
+          />
+        </>
+      )}
+
       <MainTab.Screen name={'Profile'} component={ProfileScreen} />
     </MainTab.Navigator>
   );

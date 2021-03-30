@@ -8,6 +8,7 @@ import {
   Keyboard,
   Switch,
   Platform,
+  TextInput,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Input from '../components/Input';
@@ -169,7 +170,7 @@ export default function AddScheduleScreen({ route, navigation }) {
             value={lecture}
           />
           {lecture ? (
-            <View style={styles.todoCont}>
+            <View style={styles.contentContainer}>
               <DateTimePicker
                 testID='dateTimePicker'
                 value={time}
@@ -188,15 +189,21 @@ export default function AddScheduleScreen({ route, navigation }) {
               />
             </View>
           ) : (
-            <View style={styles.todoCont}>
+            <View style={styles.contentContainer}>
               <Text> To Do.</Text>
               <Input
-                placeholder={'Routine'}
+                style={{ maxHeight: '50%', paddingTop: 18 }}
+                multiline={true}
                 value={todo}
                 onChangeText={setTodo}
               />
               <Text> Diet.</Text>
-              <Input placeholder={'Diet'} value={diet} onChangeText={setDiet} />
+              <Input
+                style={{ maxHeight: '40%', paddingTop: 18 }}
+                multiline={true}
+                value={diet}
+                onChangeText={setDiet}
+              />
               <BoxButton
                 style={styles.button}
                 title={'등록하기'}
@@ -217,8 +224,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  todoCont: {
-    width: 300,
+  contentContainer: {
+    width: '80%',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 30,

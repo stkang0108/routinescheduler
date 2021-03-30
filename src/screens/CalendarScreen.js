@@ -4,16 +4,8 @@ import * as SecureStore from 'expo-secure-store';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { Card, Avatar } from 'react-native-paper';
 import { Agenda } from 'react-native-calendars';
+import { GET_SCHEDULES_AND_LECTURE } from '../query_mutation';
 
-const GET_SCHEDULES = gql`
-  query getSchedule($name: String!) {
-    getSchedule(name: $name) {
-      date
-      todo
-      diet
-    }
-  }
-`;
 const day = new Date();
 const year = day.getFullYear();
 const month =
@@ -34,31 +26,16 @@ export default function CalendarScreen({ navigation }) {
       setUser(JSON.parse(Auth).user);
     });
   }, []);
-  const { loading, error, data } = useQuery(GET_SCHEDULES, {
+  const { loading, error, data } = useQuery(GET_SCHEDULES_AND_LECTURE, {
     variables: { name: user.name },
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
 
   const allSchedule = data.getSchedule;
+  const allLecture = data.getLecture;
   const loadItems = (day) => {
     setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-        for (let j = 0; j < allSchedule.length; j++) {
-          if (allSchedule[j].date === strTime) {
-            if (!items[strTime]) {
-              items[strTime] = [];
-              items[strTime].push({
-                date: strTime,
-                todo: allSchedule[j].todo,
-              });
-            }
-          }
-        }
-      }
-
       for (let i = -15; i < 85; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = timeToString(time);
@@ -68,7 +45,30 @@ export default function CalendarScreen({ navigation }) {
             date: strTime,
           });
         }
+        if (allSchedule.length !== 0) {
+          for (let j = 0; j < allSchedule.length; j++) {
+            if (allSchedule[j].date === strTime) {
+              items[strTime] = [];
+              items[strTime].push({
+                date: strTime,
+                todo: allSchedule[j].todo,
+              });
+            }
+          }
+        }
+        if (allLecture !== 0) {
+          for (let k = 0; k < allLecture.length; k++) {
+            if (allLecture[k].date === strTime) {
+              items[strTime] = [];
+              items[strTime].push({
+                date: strTime,
+                time: allLecture[k].time,
+              });
+            }
+          }
+        }
       }
+
       const newItems = {};
       Object.keys(items).forEach((key) => {
         newItems[key] = items[key];
@@ -82,9 +82,8 @@ export default function CalendarScreen({ navigation }) {
       <TouchableOpacity
         style={styles.itemContainer}
         onPress={() => {
-          navigation.navigate('ADD', {
+          navigation.navigate('SELECT', {
             name: user.name,
-            email: user.email,
             date: item.date,
           });
         }}
@@ -92,7 +91,7 @@ export default function CalendarScreen({ navigation }) {
         <Card>
           <Card.Content>
             <View style={styles.item}>
-              <Text>{item.todo}</Text>
+              <Text>{item.todo ? item.todo : item.time}</Text>
               <Avatar.Text label='PT' />
             </View>
           </Card.Content>

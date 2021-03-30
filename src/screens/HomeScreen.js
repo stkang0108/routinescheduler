@@ -16,7 +16,6 @@ const today = `${year}-${month}-${date}`;
 
 export default function MainScreen() {
   const [user, setUser] = useState({});
-  const [lecture, setLecture] = useState({});
   useEffect(() => {
     SecureStore.getItemAsync('Auth').then((Auth) => {
       setUser(JSON.parse(Auth).user);
@@ -86,9 +85,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contentsContainer: {
-    width: '100%',
     backgroundColor: '#807f75',
-    height: '20%',
+    height: '40%',
     width: '85%',
     marginTop: 20,
     padding: 50,
