@@ -3,9 +3,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import ProfileScreen from '../screens/ProfileScreen';
-import HomeScreen from '../screens/HomeScreen';
+import MemberHomeScreen from '../screens/MemberHomeScreen';
 import TrainerCalendarStackNavigator from '../navigators/TrainerCalendarStackNavigator';
 import MemberCalendarStackNavigator from '../navigators/MemberCalendarStackNavigator';
+import TrainerHomeStackNavigator from '../navigators/TrainerHomeStackNavigator';
 
 const MainTab = createBottomTabNavigator();
 
@@ -41,9 +42,9 @@ export default function MainTabNavigator() {
         inactiveTintColor: 'gray',
       }}
     >
-      <MainTab.Screen name={'Home'} component={HomeScreen} />
       {user.trainer === 'trainer' ? (
         <>
+          <MainTab.Screen name={'Home'} component={TrainerHomeStackNavigator} />
           <MainTab.Screen
             name={'Calendar'}
             component={TrainerCalendarStackNavigator}
@@ -51,6 +52,7 @@ export default function MainTabNavigator() {
         </>
       ) : (
         <>
+          <MainTab.Screen name={'Home'} component={MemberHomeScreen} />
           <MainTab.Screen
             name={'Calendar'}
             component={MemberCalendarStackNavigator}

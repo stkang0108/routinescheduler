@@ -2,16 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { StyleSheet, Text, View, Picker } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { GET_MEMBER } from '.././query_mutation';
 import BoxButton from '../components/BoxButton';
-
-const GET_MEMBER = gql`
-  query getMember($name: String!) {
-    getMember(name: $name) {
-      name
-      email
-    }
-  }
-`;
 
 export default function MembersScreen({ navigation }) {
   const [choosenMember, setChoosenMember] = useState('');

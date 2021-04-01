@@ -36,6 +36,28 @@ export const GET_SCHEDULES_AND_LECTURE = gql`
   }
 `;
 
+export const GET_TODAYLECTURE = gql`
+  query($name: String!) {
+    getTodayLecture(name: $name) {
+      id
+      date
+      time
+      postedBy {
+        name
+      }
+    }
+  }
+`;
+
+export const GET_MEMBER = gql`
+  query getMember($name: String!) {
+    getMember(name: $name) {
+      name
+      email
+    }
+  }
+`;
+
 ////////////// mutation ////////////////
 
 export const ADDLECTURE = gql`

@@ -17,6 +17,7 @@
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
     "expo": "~40.0.0",
+    "expo-calendar": "~8.6.0",
     "expo-secure-store": "~9.3.0",
     "expo-status-bar": "~1.0.3",
     "graphql": "^15.5.0",

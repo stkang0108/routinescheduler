@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import * as SecureStore from 'expo-secure-store';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { Card, Avatar } from 'react-native-paper';
@@ -56,7 +56,7 @@ export default function CalendarScreen({ navigation }) {
             }
           }
         }
-        if (allLecture !== 0) {
+        if (allLecture.length !== 0) {
           for (let k = 0; k < allLecture.length; k++) {
             if (allLecture[k].date === strTime) {
               items[strTime] = [];
@@ -119,9 +119,8 @@ const styles = StyleSheet.create({
   },
   itemContainer: { marginRight: 10, marginTop: 18 },
   item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    minHeight: 50,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  addBtn: {},
 });

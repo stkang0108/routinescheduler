@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { StyleSheet, Text, View } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import Todo from '../components/Todo';
 import Diet from '../components/Diet';
 import Lecture from '../components/Lecture';
-import { GET_SCHEDULES_AND_TODAYLECTURE } from '../query_mutation';
+import { GET_SCHEDULES_AND_LECTURE } from '../query_mutation';
 
 const day = new Date();
 const year = day.getFullYear();
@@ -14,14 +14,14 @@ const month =
 const date = day.getDate() < 10 ? '0' + day.getDate() : day.getDate();
 const today = `${year}-${month}-${date}`;
 
-export default function MainScreen() {
+export default function MemberHomeScreen() {
   const [user, setUser] = useState({});
   useEffect(() => {
     SecureStore.getItemAsync('Auth').then((Auth) => {
       setUser(JSON.parse(Auth).user);
     });
   }, []);
-  const { loading, error, data } = useQuery(GET_SCHEDULES_AND_TODAYLECTURE, {
+  const { loading, error, data } = useQuery(GET_SCHEDULES_AND_LECTURE, {
     variables: { name: user.name },
     pollInterval: 300,
   });
@@ -29,9 +29,10 @@ export default function MainScreen() {
   if (error) return 'Error! ${error}';
 
   const todaySchedule = new Object();
-  const todayLecture = [];
+  const todayLecture = new Object();
   const allSchedules = data.getSchedule;
-  const allLectures = data.getTodayLecture;
+  const allLectures = data.getLecture;
+
   for (let i = 0; i < allSchedules.length; i++) {
     if (allSchedules[i].date === today) {
       todaySchedule.todo = allSchedules[i].todo;
@@ -40,11 +41,7 @@ export default function MainScreen() {
   }
   for (let j = 0; j < allLectures.length; j++) {
     if (allLectures[j].date === today) {
-      todayLecture.push({
-        id: allLectures[j].id,
-        time: allLectures[j].time,
-        name: allLectures[j].postedBy.name,
-      });
+      todayLecture.time = allLectures[j].time;
     }
   }
 
@@ -52,25 +49,18 @@ export default function MainScreen() {
     <View style={styles.container}>
       <Text>{today}</Text>
       <Text>안녕하세요 {user.name} 님.</Text>
-      {user.trainer !== 'trainer' ? (
+      {todaySchedule.todo ? (
         <View style={styles.contentsContainer}>
           <Todo contents={todaySchedule.todo} />
           <Diet food={todaySchedule.diet} />
         </View>
+      ) : todayLecture.time ? (
+        <View style={styles.contentsContainer}>
+          <Lecture time={todayLecture.time} name={user.name} />
+        </View>
       ) : (
         <View style={styles.contentsContainer}>
-          <Text style={styles.lectureText}>Lecture</Text>
-          {todayLecture
-            .sort(function (a, b) {
-              return a['time'].replace(':', '') - b['time'].replace(':', '');
-            })
-            .map((lecture) => (
-              <Lecture
-                key={lecture.id}
-                time={lecture.time}
-                name={lecture.name}
-              />
-            ))}
+          <Text>등록된 일정이 없습니다.</Text>
         </View>
       )}
     </View>
