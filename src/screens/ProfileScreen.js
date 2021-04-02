@@ -7,6 +7,7 @@ import {
   Keyboard,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import * as Updates from 'expo-updates';
 import BoxButton from '../components/BoxButton';
 import AddTrainer from '../components/AddTrainer';
 
@@ -20,7 +21,7 @@ export default function ProfileScreen({ navigation }) {
 
   const signoutButton = async () => {
     await SecureStore.deleteItemAsync('Auth');
-    navigation.reset({ routes: [{ name: 'LOGIN' }] });
+    await Updates.reloadAsync();
   };
 
   return (

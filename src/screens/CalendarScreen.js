@@ -92,7 +92,7 @@ export default function CalendarScreen({ navigation }) {
           <Card.Content>
             <View style={styles.item}>
               <Text>{item.todo ? item.todo : item.time}</Text>
-              <Avatar.Text label='PT' />
+              {/* <Avatar.Text label='PT' /> */}
             </View>
           </Card.Content>
         </Card>
