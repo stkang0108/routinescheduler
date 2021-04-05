@@ -11,7 +11,7 @@ export default function FilledButton({ title, style, onPress }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#224bfe',
+    backgroundColor: '#ff7420',
     width: '45%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontWeight: '400',
+    fontWeight: '600',
     fontSize: 17,
   },
 });

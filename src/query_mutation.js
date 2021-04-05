@@ -59,6 +59,24 @@ export const GET_MEMBER = gql`
 `;
 
 ////////////// mutation ////////////////
+export const SIGNIN = gql`
+  mutation signin($email: String!, $password: String!) {
+    signin(email: $email, password: $password) {
+      token
+      user {
+        email
+        name
+        trainer
+      }
+    }
+  }
+`;
+
+export const SIGNUP = gql`
+  mutation signup($email: String!, $password: String!, $name: String!) {
+    signup(email: $email, password: $password, name: $name)
+  }
+`;
 
 export const ADDLECTURE = gql`
   mutation addLecture($name: String!, $date: String!, $time: String!) {

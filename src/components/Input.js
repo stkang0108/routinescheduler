@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 
 export default function Input({ style, ...props }) {
   return <TextInput {...props} style={[styles.input, style]} />;
@@ -7,7 +7,7 @@ export default function Input({ style, ...props }) {
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: '#e6e6e6',
+    backgroundColor: '#f2f2f2',
     width: '100%',
     borderRadius: 8,
     padding: 18,

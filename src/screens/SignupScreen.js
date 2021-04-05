@@ -1,28 +1,26 @@
 import React, { useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import {
   StyleSheet,
   View,
+  KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  ImageBackground,
 } from 'react-native';
-import Heading from '../components/Heading';
 import Input from '../components/Input';
 import BoxButton from '../components/BoxButton';
 import IconButton from '../components/IconButton';
-
-const SIGNUP = gql`
-  mutation signup($email: String!, $password: String!, $name: String!) {
-    signup(email: $email, password: $password, name: $name)
-  }
-`;
+import Error from '../components/Error';
+import { SIGNUP } from '../query_mutation';
 
 export default function SignupScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
+  const [error, setError] = useState('');
   const [signup, { data }] = useMutation(SIGNUP);
 
   const signupButton = async () => {
@@ -34,7 +32,7 @@ export default function SignupScreen({ navigation }) {
         name !== ''
       ) {
         if (password !== confirmPass) {
-          confirmPassErrAlert();
+          setError('작성해주신 비밀번호가 다릅니다, 다시 한번 확인해 주세요. ');
         } else {
           const { data } = await signup({
             variables: { email, name, password },
@@ -44,97 +42,98 @@ export default function SignupScreen({ navigation }) {
           }
         }
       }
-    } catch (error) {
-      overlapAlert();
+    } catch (err) {
+      setError(err.message);
     }
   };
 
-  const overlapAlert = () =>
-    Alert.alert(
-      '이메일 중복 오류',
-      '작성하신 이메일 주소가 이미 존재합니다.',
-      [{ text: '확인', onPress: () => console.log('OK Pressed') }],
-      { cancelable: false }
-    );
-
-  const confirmPassErrAlert = () =>
-    Alert.alert(
-      '비밀번호를 확인해 주세요',
-      '',
-      [{ text: '확인', onPress: () => console.log('OK Pressed') }],
-      { cancelable: false }
-    );
-
   const welcomeAlert = () =>
     Alert.alert(
-      '회원가입이 완료되었습니다!',
-      '',
+      '회원가입이 완료되었습니다.',
+      '이전 페이지에서 로그인 부탁드리겠습니다.',
       [{ text: '확인', onPress: () => navigation.pop() }],
       { cancelable: false }
     );
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Heading style={styles.title}>SIGN UP</Heading>
-        <IconButton
-          style={styles.iconButton}
-          name={'ios-close-circle-outline'}
-          size={30}
-          color='#224bfe'
-          onPress={() => {
-            navigation.pop();
-          }}
-        />
-        <Input
-          style={styles.input}
-          placeholder={'이름'}
-          value={name}
-          onChangeText={setName}
-        />
-        <Input
-          style={styles.input}
-          placeholder={'이메일@example.com'}
-          keyboardType={'email-address'}
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Input
-          style={styles.input}
-          placeholder={'비밀번호'}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <Input
-          style={styles.input}
-          placeholder={'비밀번호 확인'}
-          value={confirmPass}
-          onChangeText={setConfirmPass}
-          secureTextEntry
-        />
-        <BoxButton
-          title={'회원가입'}
-          style={styles.signupBtn}
-          onPress={signupButton}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+    >
+      <ImageBackground
+        source={{ uri: 'https://ifh.cc/g/vEnVKW.jpg' }}
+        style={styles.image}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.inner}>
+            <IconButton
+              style={styles.iconButton}
+              name={'ios-close-circle-outline'}
+              size={30}
+              color='#ff7420'
+              onPress={() => {
+                navigation.pop();
+              }}
+            />
+            <Error error={error} />
+            <Input
+              style={styles.input}
+              placeholder={'이름'}
+              value={name}
+              onChangeText={setName}
+            />
+            <Input
+              style={styles.input}
+              placeholder={'아이디'}
+              value={email}
+              onChangeText={setEmail}
+            />
+            <Input
+              style={styles.input}
+              placeholder={'비밀번호'}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            <Input
+              style={styles.input}
+              placeholder={'비밀번호 확인'}
+              value={confirmPass}
+              onChangeText={setConfirmPass}
+              secureTextEntry
+            />
+            <BoxButton
+              title={'회원가입'}
+              style={styles.signupBtn}
+              onPress={signupButton}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    paddingTop: 100,
-    alignItems: 'center',
   },
-  title: {
-    marginBottom: 35,
+  image: {
+    flex: 1,
+    width: '100%',
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  inner: {
+    flex: 1,
+    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   input: {
-    marginVertical: 8,
+    borderColor: '#ff7420',
+    borderWidth: 2,
+    marginTop: 15,
   },
   signupBtn: {
     marginTop: 20,
