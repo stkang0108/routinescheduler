@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
-import { Card, Avatar } from 'react-native-paper';
+import { useQuery } from '@apollo/client';
+import { StyleSheet, TouchableOpacity, View, Text, Alert } from 'react-native';
+import { Card } from 'react-native-paper';
 import { Agenda } from 'react-native-calendars';
 import { GET_SCHEDULES_AND_LECTURE } from '../query_mutation';
 
@@ -76,7 +76,6 @@ export default function MemberCalScreen({ route, navigation }) {
   const renderItem = (item) => {
     return (
       <TouchableOpacity
-        style={styles.itemContainer}
         onPress={() => {
           navigation.navigate('ADD', {
             name,
@@ -84,11 +83,22 @@ export default function MemberCalScreen({ route, navigation }) {
           });
         }}
       >
-        <Card>
+        <Card style={styles.itemContainer}>
           <Card.Content>
-            <View style={styles.item}>
-              <Text>{item.todo ? item.todo : item.time}</Text>
-            </View>
+            <>
+              {item.todo ? (
+                <View style={styles.schedule}>
+                  <Text>{item.todo}</Text>
+                </View>
+              ) : item.time ? (
+                <View style={styles.lecture}>
+                  <Text>{item.time}</Text>
+                  <Text style={{ fontSize: 25 }}>🏃‍♂️🏃‍♀️🏃</Text>
+                </View>
+              ) : (
+                <View style={styles.schedule} />
+              )}
+            </>
           </Card.Content>
         </Card>
       </TouchableOpacity>
@@ -102,6 +112,12 @@ export default function MemberCalScreen({ route, navigation }) {
         loadItemsForMonth={loadItems}
         selected={{ today }}
         renderItem={renderItem}
+        theme={{
+          agendaDayTextColor: '#ff7420',
+          agendaDayNumColor: '#ff7420',
+          agendaTodayColor: '#ff7420',
+          agendaKnobColor: '#ff7420',
+        }}
       />
     </View>
   );
@@ -112,10 +128,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
-  itemContainer: { marginRight: 10, marginTop: 18 },
-  item: {
+  itemContainer: {
+    marginRight: 10,
+    marginTop: 18,
+    borderRadius: 15,
+  },
+  schedule: {
     minHeight: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  lecture: {
+    height: 50,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });

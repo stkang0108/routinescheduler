@@ -78,6 +78,12 @@ export const SIGNUP = gql`
   }
 `;
 
+export const ADDTRAINER = gql`
+  mutation addTrainer($email: String!, $trainer: String!) {
+    addTrainer(email: $email, trainer: $trainer)
+  }
+`;
+
 export const ADDLECTURE = gql`
   mutation addLecture($name: String!, $date: String!, $time: String!) {
     addLecture(name: $name, date: $date, time: $time)

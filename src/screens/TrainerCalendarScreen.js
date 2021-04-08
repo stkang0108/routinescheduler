@@ -56,8 +56,8 @@ export default function TrainerCalendarScreen({ route }) {
 
   const renderItem = (item) => {
     return (
-      <View style={styles.itemContainer}>
-        <Card>
+      <View>
+        <Card style={styles.itemContainer}>
           <Card.Content>
             <View style={styles.item}>
               {item
@@ -85,6 +85,12 @@ export default function TrainerCalendarScreen({ route }) {
         loadItemsForMonth={loadItems}
         selected={{ today }}
         renderItem={renderItem}
+        theme={{
+          agendaDayTextColor: '#ff7420',
+          agendaDayNumColor: '#ff7420',
+          agendaTodayColor: '#ff7420',
+          agendaKnobColor: '#ff7420',
+        }}
       />
     </View>
   );
@@ -95,7 +101,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
-  itemContainer: { marginRight: 10, marginTop: 18 },
+  itemContainer: {
+    marginRight: 10,
+    marginTop: 18,
+    borderRadius: 15,
+  },
   item: {
     alignItems: 'center',
     justifyContent: 'center',

@@ -44,7 +44,7 @@ export default function SigninScreen({ navigation }) {
         <View style={styles.inner}>
           <Image
             style={{ width: 300, height: 300 }}
-            source={{ uri: 'https://ifh.cc/g/ksZZ8D.jpg' }}
+            source={{ uri: 'https://ifh.cc/g/veCvqr.png' }}
             resizeMode='stretch'
           />
           <Input

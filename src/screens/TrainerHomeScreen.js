@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { GET_TODAYLECTURE } from '../query_mutation';
 import Lecture from '../components/Lecture';
@@ -40,63 +40,87 @@ export default function TrainerHomeScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>{today}</Text>
-      <Text>안녕하세요 {user.name} 님.</Text>
-      {todayLecture.length !== 0 ? (
-        <View style={styles.contentsContainer}>
-          <Text style={styles.lectureText}>Lecture</Text>
-          {todayLecture
-            .sort(function (a, b) {
-              return a['time'].replace(':', '') - b['time'].replace(':', '');
-            })
-            .map((lecture) => (
-              <Lecture
-                key={lecture.id}
-                time={lecture.time}
-                name={lecture.name}
-              />
-            ))}
+    <ImageBackground
+      source={{ uri: 'https://ifh.cc/g/7wrxPV.jpg' }}
+      style={{ flex: 1 }}
+    >
+      <View style={styles.container}>
+        <View style={styles.inner1}>
+          <Text style={styles.text}>
+            {year}년 {month}월 {date}일
+          </Text>
+          <Text style={styles.text}>안녕하세요 {user.name} 트레이너님.</Text>
         </View>
-      ) : (
-        <View style={styles.contentsContainer}>
-          <Text>오늘 일정이 없습니다.</Text>
+        <View style={styles.inner2}>
+          {todayLecture.length !== 0 ? (
+            <View style={styles.contentsContainer}>
+              {todayLecture
+                .sort(function (a, b) {
+                  return (
+                    a['time'].replace(':', '') - b['time'].replace(':', '')
+                  );
+                })
+                .map((lecture) => (
+                  <Lecture
+                    key={lecture.id}
+                    time={lecture.time}
+                    name={lecture.name}
+                    trainer={user.trainer}
+                  />
+                ))}
+            </View>
+          ) : (
+            <View style={styles.contentsContainer}>
+              <Text style={styles.emptyText}>오늘 일정이 없습니다.</Text>
+            </View>
+          )}
+          <BoxButton
+            title={'일정표'}
+            onPress={() => {
+              navigation.navigate('TCAL', {
+                data: allLectures,
+              });
+            }}
+          />
         </View>
-      )}
-      <BoxButton
-        style={styles.button}
-        title={'일정표'}
-        onPress={() => {
-          navigation.navigate('TCAL', {
-            data: allLectures,
-          });
-        }}
-      />
-    </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  inner1: {
+    height: '30%',
+    marginTop: 20,
+    paddingHorizontal: 40,
+    paddingTop: 100,
+  },
+  inner2: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   contentsContainer: {
-    backgroundColor: '#807f75',
-    minHeight: '28%',
-    width: '85%',
-    marginTop: 20,
-    padding: 50,
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    minHeight: '40%',
+    width: '80%',
+    paddingVertical: 10,
+    paddingHorizontal: 35,
+    marginBottom: 30,
+    borderRadius: 20,
+    borderColor: '#ff7420',
+    borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  lectureText: {
-    marginBottom: 10,
+  text: {
+    fontSize: 22,
+    fontWeight: '900',
   },
-  button: {
-    marginTop: 20,
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '500',
   },
 });

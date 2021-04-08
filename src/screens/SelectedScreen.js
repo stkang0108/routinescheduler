@@ -1,9 +1,8 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { GET_SCHEDULES_AND_LECTURE } from '../query_mutation';
 import Todo from '../components/Todo';
-import Diet from '../components/Diet';
 import Lecture from '../components/Lecture';
 
 export default function SelectedScreen({ route }) {
@@ -30,33 +29,76 @@ export default function SelectedScreen({ route }) {
     }
   }
   return (
-    <>
+    <ImageBackground
+      source={{ uri: 'https://ifh.cc/g/TWShOt.jpg' }}
+      style={{ flex: 1 }}
+    >
       {selectedDaySchedule.todo ? (
         <View style={styles.container}>
-          <Text>{date}</Text>
-          <Text>안녕하세요 {name} 님.</Text>
-          <Todo contents={selectedDaySchedule.todo} />
-          <Diet food={selectedDaySchedule.diet} />
+          <View style={styles.inner1}>
+            <Text style={styles.text}>{date}</Text>
+            <Text style={styles.text}>{name} 회원님의 스케줄입니다.</Text>
+          </View>
+          <View style={styles.inner2}>
+            <View style={styles.contentsContainer}>
+              <Todo contents={selectedDaySchedule.todo} />
+            </View>
+          </View>
         </View>
       ) : selectedDayLecture.time ? (
         <View style={styles.container}>
-          <Text>{date}</Text>
-          <Lecture time={selectedDayLecture.time} name={name} />
+          <View style={styles.inner1}>
+            <Text style={styles.text}>{date}</Text>
+            <Text style={styles.text}>{name} 회원님의 수업 시간입니다.</Text>
+          </View>
+          <View style={styles.inner2}>
+            <View style={styles.contentsContainer}>
+              <Lecture time={selectedDayLecture.time} name={name} />
+            </View>
+          </View>
         </View>
       ) : (
         <View style={styles.container}>
-          <Text>등록된 일정이 없습니다.</Text>
+          <View style={styles.inner1}>
+            <Text style={styles.text}>{date}</Text>
+            <Text style={styles.text}>등록된 일정이 없습니다.</Text>
+          </View>
         </View>
       )}
-    </>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  inner1: {
+    minHeight: '30%',
+    marginTop: 20,
+    paddingHorizontal: 40,
+    paddingTop: 100,
+  },
+  inner2: {
+    minHeight: '40%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  contentsContainer: {
+    backgroundColor: '#fff',
+    width: '85%',
+    minHeight: '40%',
+    paddingVertical: 10,
+    paddingHorizontal: 35,
+    marginBottom: 15,
+    borderRadius: 20,
+    borderColor: '#ff7420',
+    borderWidth: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 22,
+    fontWeight: '900',
   },
 });

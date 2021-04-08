@@ -28,6 +28,7 @@ export default function CalendarScreen({ navigation }) {
   }, []);
   const { loading, error, data } = useQuery(GET_SCHEDULES_AND_LECTURE, {
     variables: { name: user.name },
+    pollInterval: 300,
   });
   if (loading) return null;
   if (error) return 'Error! ${error}';
@@ -80,7 +81,6 @@ export default function CalendarScreen({ navigation }) {
   const renderItem = (item) => {
     return (
       <TouchableOpacity
-        style={styles.itemContainer}
         onPress={() => {
           navigation.navigate('SELECT', {
             name: user.name,
@@ -88,12 +88,22 @@ export default function CalendarScreen({ navigation }) {
           });
         }}
       >
-        <Card>
+        <Card style={styles.itemContainer}>
           <Card.Content>
-            <View style={styles.item}>
-              <Text>{item.todo ? item.todo : item.time}</Text>
-              {/* <Avatar.Text label='PT' /> */}
-            </View>
+            <>
+              {item.todo ? (
+                <View style={styles.schedule}>
+                  <Text>{item.todo}</Text>
+                </View>
+              ) : item.time ? (
+                <View style={styles.lecture}>
+                  <Text>{item.time}</Text>
+                  <Text style={{ fontSize: 25 }}>🏃‍♂️🏃‍♀️🏃</Text>
+                </View>
+              ) : (
+                <View style={styles.schedule} />
+              )}
+            </>
           </Card.Content>
         </Card>
       </TouchableOpacity>
@@ -107,6 +117,12 @@ export default function CalendarScreen({ navigation }) {
         loadItemsForMonth={loadItems}
         selected={{ today }}
         renderItem={renderItem}
+        theme={{
+          agendaDayTextColor: '#ff7420',
+          agendaDayNumColor: '#ff7420',
+          agendaTodayColor: '#ff7420',
+          agendaKnobColor: '#ff7420',
+        }}
       />
     </View>
   );
@@ -117,10 +133,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
-  itemContainer: { marginRight: 10, marginTop: 18 },
-  item: {
+  itemContainer: {
+    marginRight: 10,
+    marginTop: 18,
+    borderRadius: 15,
+  },
+  schedule: {
     minHeight: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  lecture: {
+    height: 50,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });

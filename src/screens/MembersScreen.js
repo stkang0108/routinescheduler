@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { StyleSheet, Text, View, Picker } from 'react-native';
+import { useQuery } from '@apollo/client';
+import { StyleSheet, Text, View, Picker, ImageBackground } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { GET_MEMBER } from '.././query_mutation';
 import BoxButton from '../components/BoxButton';
@@ -21,49 +21,84 @@ export default function MembersScreen({ navigation }) {
   if (error) return 'Error! ${error}';
 
   return (
-    <View style={styles.container}>
-      <Picker
-        selectedValue={choosenMember}
-        onValueChange={(itemValue, itemIndex) => {
-          setChoosenMember(itemValue);
-          setChoosenIndex(itemIndex);
-        }}
-      >
-        {data.getMember.map((member) => (
-          <Picker.Item
-            key={choosenIndex}
-            label={member.name}
-            value={member.name}
+    <ImageBackground
+      source={{ uri: 'https://ifh.cc/g/TWShOt.jpg' }}
+      style={{ flex: 1 }}
+    >
+      <View style={styles.container}>
+        <View style={styles.inner1}>
+          <Text style={styles.suggestText}>
+            조회를 원하는 회원님을 선택해 주세요.
+          </Text>
+        </View>
+        <View style={styles.inner2}>
+          <View style={styles.contentsContainer}>
+            <Picker
+              selectedValue={choosenMember}
+              onValueChange={(itemValue, itemIndex) => {
+                setChoosenMember(itemValue);
+                setChoosenIndex(itemIndex);
+              }}
+            >
+              {data.getMember.map((member) => (
+                <Picker.Item
+                  key={choosenIndex}
+                  label={member.name}
+                  value={member.name}
+                />
+              ))}
+            </Picker>
+          </View>
+          <Text style={styles.memberText}>
+            선택된 회원: {choosenMember} 회원님
+          </Text>
+          <BoxButton
+            style={{ marginTop: 20 }}
+            title={'바로가기'}
+            onPress={() => {
+              navigation.navigate('MCAL', {
+                name: choosenMember,
+              });
+            }}
           />
-        ))}
-      </Picker>
-      <Text style={styles.text}>선택된 회원: {choosenMember}</Text>
-      <BoxButton
-        title={'OK'}
-        style={styles.button}
-        onPress={() => {
-          navigation.navigate('MCAL', {
-            name: choosenMember,
-          });
-        }}
-      />
-    </View>
+        </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  inner1: {
+    height: '30%',
+    marginTop: 20,
+    paddingTop: 130,
+    paddingHorizontal: 40,
+  },
+  inner2: {
+    alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'column',
-    padding: 20,
   },
-  text: {
+  contentsContainer: {
+    backgroundColor: '#fff',
+    width: '85%',
+    minHeight: '40%',
+    paddingVertical: 10,
+    paddingHorizontal: 35,
+    marginBottom: 15,
+    borderRadius: 20,
+    borderColor: '#ff7420',
+    borderWidth: 3,
+    justifyContent: 'center',
+  },
+  suggestText: {
     fontSize: 20,
-    alignSelf: 'center',
+    fontWeight: '700',
   },
-  button: {
-    alignSelf: 'center',
-    marginTop: 15,
+  memberText: {
+    fontSize: 18,
+    fontWeight: '700',
   },
 });

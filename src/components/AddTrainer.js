@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { View, StyleSheet, Alert } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import * as Updates from 'expo-updates';
 import BoxButton from './BoxButton';
 import Input from './Input';
-
-const ADDTRAINER = gql`
-  mutation addTrainer($email: String!, $trainer: String!) {
-    addTrainer(email: $email, trainer: $trainer)
-  }
-`;
+import Error from './Error';
+import { ADDTRAINER } from '../query_mutation';
 
 export default function AddTrainer({ user }) {
   const email = user.email;
   const [trainer, setTrainer] = useState('');
+  const [error, setError] = useState('');
   const [addTrianer, { data }] = useMutation(ADDTRAINER);
   const addButton = async () => {
     try {
@@ -21,15 +20,38 @@ export default function AddTrainer({ user }) {
           variables: { email, trainer },
         });
       }
+      await SecureStore.deleteItemAsync('Auth');
+      await Updates.reloadAsync();
     } catch (err) {
-      console.log(err);
+      setError(err.message);
     }
   };
+
+  const addTrainerAlert = () =>
+    Alert.alert(
+      '트레이너를 등록합니다.',
+      `${trainer} 트레이너가 맞습니까?`,
+      [
+        { text: '확인', onPress: () => confirmAlert() },
+        { text: '아니요', style: 'cancel' },
+      ],
+      { cancelable: false }
+    );
+
+  const confirmAlert = () =>
+    Alert.alert(
+      '앱이 재실행 될 예정입니다.',
+      '정상적으로 트레이너가 등록될 시 재로그인 부탁드리겠습니다.',
+      [{ text: '확인', onPress: () => addButton() }],
+      { cancelable: false }
+    );
+
   if (user.trainer !== 'trainer' && user.trainer === '') {
     return (
       <View style={styles.container}>
+        <Error error={error} />
         <Input
-          style={styles.input}
+          style={{ marginTop: 10 }}
           placeholder={'트레이너 이름'}
           value={trainer}
           onChangeText={setTrainer}
@@ -37,7 +59,7 @@ export default function AddTrainer({ user }) {
         <BoxButton
           title={'트레이너 연결하기'}
           style={styles.button}
-          onPress={addButton}
+          onPress={addTrainerAlert}
         />
       </View>
     );
@@ -47,12 +69,13 @@ export default function AddTrainer({ user }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#807f75',
-    height: '30%',
+    minHeight: '25%',
     width: '85%',
-    marginTop: 20,
-    padding: 50,
-    borderRadius: 10,
+    paddingHorizontal: 30,
+    paddingBottom: 30,
+    borderColor: '#ff7420',
+    borderWidth: 2,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },

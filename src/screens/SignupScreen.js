@@ -61,7 +61,7 @@ export default function SignupScreen({ navigation }) {
       behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
     >
       <ImageBackground
-        source={{ uri: 'https://ifh.cc/g/vEnVKW.jpg' }}
+        source={{ uri: 'https://ifh.cc/g/DQYAOf.jpg' }}
         style={styles.image}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
