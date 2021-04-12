@@ -35,7 +35,6 @@ export default function MemberHomeScreen() {
   for (let i = 0; i < allSchedules.length; i++) {
     if (allSchedules[i].date === today) {
       todaySchedule.todo = allSchedules[i].todo;
-      todaySchedule.diet = allSchedules[i].diet;
     }
   }
   for (let j = 0; j < allLectures.length; j++) {

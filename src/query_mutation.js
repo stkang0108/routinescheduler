@@ -7,7 +7,6 @@ export const GET_SCHEDULES_AND_TODAYLECTURE = gql`
     getSchedule(name: $name) {
       date
       todo
-      diet
     }
     getTodayLecture(name: $name) {
       id
@@ -26,7 +25,6 @@ export const GET_SCHEDULES_AND_LECTURE = gql`
       id
       date
       todo
-      diet
     }
     getLecture(name: $name) {
       id
@@ -91,13 +89,8 @@ export const ADDLECTURE = gql`
 `;
 
 export const ADDSCHEDULE = gql`
-  mutation addSchedule(
-    $name: String!
-    $date: String!
-    $todo: String!
-    $diet: String!
-  ) {
-    addSchedule(name: $name, date: $date, todo: $todo, diet: $diet)
+  mutation addSchedule($name: String!, $date: String!, $todo: String!) {
+    addSchedule(name: $name, date: $date, todo: $todo)
   }
 `;
 
@@ -120,7 +113,7 @@ export const EDITLECTURE = gql`
 `;
 
 export const EDITSCHEDULE = gql`
-  mutation editSchedule($id: ID!, $todo: String!, $diet: String!) {
-    editSchedule(id: $id, todo: $todo, diet: $diet)
+  mutation editSchedule($id: ID!, $todo: String!) {
+    editSchedule(id: $id, todo: $todo)
   }
 `;

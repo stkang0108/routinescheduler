@@ -28,7 +28,6 @@ import {
 export default function AddScheduleScreen({ route, navigation }) {
   const { date, name } = route.params;
   const [todo, setTodo] = useState('');
-  const [diet, setDiet] = useState('');
   const [lecture, setLecture] = useState(false);
   const [time, setTime] = useState(new Date());
   const [show, setShow] = useState(false);
@@ -46,7 +45,6 @@ export default function AddScheduleScreen({ route, navigation }) {
     if (allSchedules[i].date === date) {
       selectedDaySchedule.id = allSchedules[i].id;
       selectedDaySchedule.todo = allSchedules[i].todo;
-      selectedDaySchedule.diet = allSchedules[i].diet;
     }
   }
   for (let j = 0; j < allLectures.length; j++) {
@@ -70,7 +68,7 @@ export default function AddScheduleScreen({ route, navigation }) {
   const scheduleRegister = async () => {
     try {
       await addSchedule({
-        variables: { name, todo, diet, date },
+        variables: { name, todo, date },
       });
       await navigation.navigate('MCAL');
     } catch (err) {
@@ -183,7 +181,6 @@ export default function AddScheduleScreen({ route, navigation }) {
                       navigation.navigate('EDITS', {
                         id: selectedDaySchedule.id,
                         etodo: selectedDaySchedule.todo,
-                        ediet: selectedDaySchedule.diet,
                       });
                     }}
                   />
@@ -274,14 +271,6 @@ export default function AddScheduleScreen({ route, navigation }) {
                         multiline={true}
                         value={todo}
                         onChangeText={setTodo}
-                      />
-
-                      <Text> Diet.</Text>
-                      <Input
-                        style={{ maxHeight: '40%', paddingTop: 18 }}
-                        multiline={true}
-                        value={diet}
-                        onChangeText={setDiet}
                       />
                     </View>
                     <BoxButton

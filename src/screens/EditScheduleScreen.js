@@ -16,9 +16,8 @@ import Input from '../components/Input';
 import BoxButton from '../components/BoxButton';
 
 export default function EditScheduleScreen({ route, navigation }) {
-  const { id, etodo, ediet } = route.params;
+  const { id, etodo } = route.params;
   const [todo, setTodo] = useState(etodo);
-  const [diet, setDiet] = useState('');
 
   const [editSchedule] = useMutation(EDITSCHEDULE);
   const editScheduleAlert = () =>
@@ -34,7 +33,7 @@ export default function EditScheduleScreen({ route, navigation }) {
   const scheduleEdit = async () => {
     try {
       await editSchedule({
-        variables: { id, todo, diet },
+        variables: { id, todo },
       });
       await navigation.navigate('MCAL');
     } catch (err) {
@@ -78,12 +77,6 @@ export default function EditScheduleScreen({ route, navigation }) {
                   value={todo}
                   onChangeText={setTodo}
                 />
-                {/* <Text> Diet.</Text>
-                <Input
-                  placeholder={ediet}
-                  value={diet}
-                  onChangeText={setDiet}
-                /> */}
               </View>
               <BoxButton title={'수정하기'} onPress={editScheduleAlert} />
             </View>

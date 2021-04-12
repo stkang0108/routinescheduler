@@ -20,7 +20,6 @@ export default function SelectedScreen({ route }) {
   for (let i = 0; i < allSchedules.length; i++) {
     if (allSchedules[i].date === date) {
       selectedDaySchedule.todo = allSchedules[i].todo;
-      selectedDaySchedule.diet = allSchedules[i].diet;
     }
   }
   for (let j = 0; j < allLectures.length; j++) {
