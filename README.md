@@ -16,3 +16,8 @@ Backend Repository [바로가기](https://github.com/stkang0108/workout_schedule
 ## DB Schema
 <img width="620" alt="스크린샷 2021-04-14 오전 12 05 34" src="https://user-images.githubusercontent.com/68824414/114575486-2c3ad980-9cb5-11eb-8a76-abc966ae373a.png">
 
+## 🚨 Advanced 🚨
+* 트레이너와 회원간의 채팅 기능 
+* 회원들의 간단한 신상정보를 트레이너가 작성 및 조회할 수 있는 기능
+* React Hooks를 활용하여 워크플로우 개선하기
+* Typescript로 리펙토링 하기
