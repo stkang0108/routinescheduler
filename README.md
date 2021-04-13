@@ -7,12 +7,12 @@
 Backend Repository [바로가기](https://www.naver.com/)
 <br>
 
-## 사용된 스택
+## Used Stacks
 ![smallStack](https://user-images.githubusercontent.com/68824414/114525633-38a53f00-9c81-11eb-8a12-17a1db99142c.png)
 
 ## API Docs
 ![apidocs](https://user-images.githubusercontent.com/68824414/114534419-f16f7c00-9c89-11eb-90e9-5ecabe682dd6.png)
 
-## DB 스키마
+## DB Schema
 <img width="620" alt="스크린샷 2021-04-14 오전 12 05 34" src="https://user-images.githubusercontent.com/68824414/114575486-2c3ad980-9cb5-11eb-8a76-abc966ae373a.png">
 
