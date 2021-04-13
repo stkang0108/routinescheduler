@@ -13,3 +13,5 @@ Backend Repository [바로가기](https://www.naver.com/)
 ## API Docs
 ![apidocs](https://user-images.githubusercontent.com/68824414/114534419-f16f7c00-9c89-11eb-90e9-5ecabe682dd6.png)
 
+## DB 
+
