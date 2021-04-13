@@ -4,4 +4,5 @@
 [시연영상 보러가기](https://bit.ly/3a8zP57)
 
 ## 사용된 스택
-![stack](https://user-images.githubusercontent.com/68824414/114525139-d1878a80-9c80-11eb-9025-3b6d38558fa7.png)
+![smallStack](https://user-images.githubusercontent.com/68824414/114525633-38a53f00-9c81-11eb-8a12-17a1db99142c.png)
+
